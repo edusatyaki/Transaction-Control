@@ -66,11 +66,32 @@ then open <http://localhost:8103> (also registered in `.claude/launch.json` as
 | `F` | full screen |
 | `R` | restart the current slide |
 | `Home` / `End` | first / last slide |
+| `+` / `-` | bigger / smaller type |
+| `0` | reset type size |
 
 16 slides, 73 steps. Each demo slide replays the two terminals statement by
 statement, with a live state strip underneath showing wallet balances, stock
 counts and row counts as they change — dashed gold for uncommitted, green for
 committed.
+
+### Sizing it for the room
+
+Type is sized as a share of **screen height**, not in fixed pixels, so the deck
+is the same physical size on a projector whether it runs at 1080p or 4K. Body
+text sits at about 3.2% of screen height — roughly 35px at 1080p — which on a
+12ft screen is legible from the back of a large lecture hall.
+
+Press `+` / `-` to adjust live once you can see the actual room, `0` to reset.
+The setting is remembered per machine, so set it once on the podium laptop and
+it holds for every class after that. The layout has been checked for overflow
+at every zoom level from 80% to 160%, at both 1440x810 and 1920x1080; dense
+slides scroll rather than clip.
+
+Two notes for a big room: the terminal panes only hold two or three statements
+at this size, which is intended — the deck reveals one statement at a time, so
+the newest one is parked at the top of its pane with its output beneath it. The
+closing recap slide is the one place where six multi-line rules cannot all be
+back-row size; treat it as a summary the students also have in this README.
 
 ## Two places PostgreSQL differs from the textbook table
 
