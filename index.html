@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transaction Cafe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07120f;
+  --panel:#0b1a16;
+  --panel-2:#0e221c;
+  --ink:#f4f1e8;
+  --ink-dim:#a9b5ae;
+  --gold:#f5b942;
+  --gold-soft:#ffd784;
+  --green:#5ddc8c;
+  --red:#ff6b6b;
+  --blue:#7fb2ff;
+  --line:rgba(245,185,66,.55);
+  --line-soft:rgba(245,185,66,.18);
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:'Poppins',system-ui,-apple-system,sans-serif;
+  overflow:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(1100px 600px at 82% 12%, rgba(245,185,66,.10), transparent 62%),
+    radial-gradient(800px 500px at 10% 88%, rgba(120,200,160,.07), transparent 60%);
+}
+
+/* ---------- shell ---------- */
+#app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column}
+header{
+  flex:0 0 auto;display:flex;align-items:center;gap:18px;
+  padding:14px 26px;border-bottom:1px solid var(--line-soft);
+}
+.brand{font-family:'Caveat',cursive;font-size:30px;line-height:1;color:var(--gold);
+  text-shadow:0 0 14px rgba(245,185,66,.45);white-space:nowrap}
+.brand small{display:block;font-size:15px;opacity:.75;margin-top:-2px}
+.title-wrap{flex:1 1 auto;min-width:0}
+.slide-title{font-size:19px;font-weight:600;letter-spacing:.2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slide-sub{font-size:12.5px;color:var(--ink-dim);margin-top:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badges{display:flex;gap:8px;align-items:center;flex:0 0 auto}
+.badge{font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;
+  padding:5px 11px;border-radius:999px;border:1px solid var(--line);color:var(--gold-soft);
+  background:rgba(245,185,66,.08);white-space:nowrap}
+.badge.pg{border-color:rgba(127,178,255,.5);color:var(--blue);background:rgba(127,178,255,.08)}
+.clock{font-family:var(--mono);font-size:13px;color:var(--ink-dim);min-width:52px;text-align:right}
+
+/* ---------- stage ---------- */
+main{flex:1 1 auto;min-height:0;padding:20px 26px;display:flex;flex-direction:column;gap:14px}
+.slide{display:none;flex:1 1 auto;min-height:0;flex-direction:column;gap:14px}
+.slide.active{display:flex}
+
+/* ---------- title slide ---------- */
+.hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;gap:16px}
+.hero h1{font-size:clamp(34px,5.2vw,68px);margin:0;line-height:1.05;font-weight:700}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero p{margin:0;max-width:820px;font-size:clamp(14px,1.5vw,19px);color:var(--ink-dim);line-height:1.6}
+.hero .cup{font-size:clamp(46px,7vw,84px);filter:drop-shadow(0 6px 24px rgba(245,185,66,.35))}
+.hero-chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:8px}
+.hero-chips span{border:1px solid var(--line-soft);border-radius:999px;padding:8px 15px;
+  font-size:13px;color:var(--gold-soft);background:rgba(245,185,66,.06)}
+.kbd-hint{margin-top:18px;font-size:12.5px;color:var(--ink-dim)}
+kbd{font-family:var(--mono);font-size:11.5px;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.18);border-bottom-width:2px;border-radius:5px;padding:2px 6px;color:var(--ink)}
+
+/* ---------- generic card ---------- */
+.card{background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));
+  border:1px solid var(--line-soft);border-radius:16px}
+
+/* ---------- session panes ---------- */
+.panes{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.panes.solo{grid-template-columns:1fr}
+.pane{display:flex;flex-direction:column;min-height:0;border-radius:16px;overflow:hidden;
+  border:1px solid var(--line-soft);background:rgba(4,10,9,.78);transition:border-color .25s,box-shadow .25s}
+.pane.live{border-color:var(--line);box-shadow:0 0 0 1px rgba(245,185,66,.18),0 12px 40px rgba(0,0,0,.45)}
+.pane-head{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 14px;
+  border-bottom:1px solid var(--line-soft);background:rgba(255,255,255,.035)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--gold);flex:0 0 auto;
+  box-shadow:0 0 0 0 rgba(245,185,66,.55)}
+.pane.live .dot{animation:pulse 1.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(245,185,66,.5)}70%{box-shadow:0 0 0 9px rgba(245,185,66,0)}100%{box-shadow:0 0 0 0 rgba(245,185,66,0)}}
+.pane-name{font-weight:600;font-size:14px}
+.pane-role{font-size:12px;color:var(--ink-dim);flex:1 1 auto;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pane-iso{font-family:var(--mono);font-size:10.5px;color:var(--gold-soft);
+  border:1px solid var(--line-soft);border-radius:6px;padding:3px 7px;white-space:nowrap}
+.pane-body{flex:1 1 auto;min-height:0;overflow-y:auto;padding:12px 14px;
+  font-family:var(--mono);font-size:13.5px;line-height:1.55}
+.pane-body::-webkit-scrollbar{width:8px}
+.pane-body::-webkit-scrollbar-thumb{background:rgba(245,185,66,.25);border-radius:4px}
+
+.line{margin-bottom:9px}
+.line.fresh{opacity:0;transform:translateY(6px);animation:in .26s ease forwards}
+@keyframes in{to{opacity:1;transform:none}}
+.line .tm{color:rgba(245,185,66,.55);font-size:11px;margin-right:8px}
+.sql{color:var(--gold-soft);white-space:pre-wrap;word-break:break-word}
+.sql .kw{color:var(--gold);font-weight:700}
+.out{margin-top:4px;padding:7px 10px;border-radius:8px;background:rgba(255,255,255,.045);
+  border-left:2px solid rgba(255,255,255,.18);color:var(--ink);white-space:pre;overflow-x:auto;font-size:12.5px}
+.out.ok{border-left-color:var(--green);color:#cdf3dc}
+.out.err{border-left-color:var(--red);color:#ffc9c9;background:rgba(255,107,107,.09);white-space:pre-wrap}
+.out.wait{border-left-color:var(--blue);color:#cfe1ff;background:rgba(127,178,255,.08)}
+.out.muted{color:var(--ink-dim)}
+.cursor{display:inline-block;width:8px;height:15px;background:var(--gold);
+  vertical-align:-2px;animation:blink 1.05s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- state strip ---------- */
+.state{flex:0 0 auto;display:flex;gap:10px;flex-wrap:wrap;align-items:stretch}
+.chip{flex:1 1 150px;min-width:140px;padding:9px 13px;border-radius:12px;
+  border:1px solid var(--line-soft);background:rgba(255,255,255,.035);
+  transition:border-color .3s,background .3s,transform .3s}
+.chip.flash{border-color:var(--gold);background:rgba(245,185,66,.14);transform:translateY(-2px)}
+.chip .k{font-size:10.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-dim)}
+.chip .v{font-family:var(--mono);font-size:19px;font-weight:700;margin-top:3px;color:var(--ink)}
+.chip.dirty .v{color:var(--gold)}
+.chip.dirty{border-style:dashed;border-color:var(--gold)}
+.chip .n{font-size:11px;color:var(--ink-dim);margin-top:2px}
+.chip.good .v{color:var(--green)}
+.chip.bad .v{color:var(--red)}
+
+/* ---------- insight ---------- */
+.insight{flex:0 0 auto;display:flex;gap:12px;align-items:flex-start;padding:12px 16px;
+  border-radius:14px;border:1px solid var(--line);background:rgba(245,185,66,.07);
+  min-height:62px;transition:opacity .25s}
+.insight .ic{font-size:20px;line-height:1.2;flex:0 0 auto}
+.insight .tx{font-size:14.5px;line-height:1.55}
+.insight .tx b{color:var(--gold-soft)}
+.insight.warn{border-color:rgba(255,107,107,.6);background:rgba(255,107,107,.08)}
+.insight.win{border-color:rgba(93,220,140,.55);background:rgba(93,220,140,.07)}
+
+/* ---------- schema slide ---------- */
+.schema{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-content:start}
+.tbl{padding:14px 16px;border-radius:14px;border:1px solid var(--line-soft);
+  background:rgba(255,255,255,.035);opacity:0;transform:translateY(10px);animation:in .3s ease forwards}
+.tbl h4{margin:0 0 4px;font-size:15px;color:var(--gold)}
+.tbl .pur{font-size:11.5px;color:var(--ink-dim);margin-bottom:9px;min-height:32px;line-height:1.4}
+.tbl ul{margin:0;padding:0;list-style:none;font-family:var(--mono);font-size:12px;line-height:1.75}
+.tbl li{color:var(--ink-dim)}
+.tbl li b{color:var(--ink);font-weight:500}
+.tbl li .ck{color:var(--red)}
+.seed{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;opacity:0;animation:in .3s ease forwards}
+.schema>.state{grid-column:1/-1}
+
+/* ---------- matrix slide ---------- */
+.matrix{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;min-height:0}
+table.iso{width:100%;border-collapse:collapse;font-size:14px}
+table.iso th,table.iso td{border:1px solid var(--line-soft);padding:9px 12px;text-align:left}
+table.iso th{background:rgba(245,185,66,.09);color:var(--gold-soft);font-weight:600;font-size:12.5px;
+  text-transform:uppercase;letter-spacing:.5px}
+table.iso td:first-child{font-family:var(--mono);font-weight:700;color:var(--ink);font-size:13px}
+table.iso tr{opacity:.22;transition:opacity .3s}
+table.iso tr.on{opacity:1}
+.yes{color:var(--red);font-weight:600}
+.no{color:var(--green);font-weight:600}
+.pg-note{color:var(--blue);font-size:12px;display:block;margin-top:2px}
+
+/* ---------- bullets ---------- */
+.bullets{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;max-width:1080px;margin:0 auto;width:100%}
+.bullet{display:flex;gap:14px;align-items:flex-start;padding:14px 18px;border-radius:14px;
+  border:1px solid var(--line-soft);background:rgba(255,255,255,.03);
+  opacity:0;transform:translateX(-10px);animation:inx .3s ease forwards}
+@keyframes inx{to{opacity:1;transform:none}}
+.bullet .n{font-family:var(--mono);font-size:13px;color:var(--gold);flex:0 0 auto;
+  width:30px;height:30px;border-radius:8px;border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center}
+.bullet h5{margin:0 0 3px;font-size:16px;font-weight:600}
+.bullet p{margin:0;font-size:13.5px;color:var(--ink-dim);line-height:1.55}
+.bullet code{font-family:var(--mono);font-size:12.5px;color:var(--gold-soft);
+  background:rgba(245,185,66,.1);padding:1px 6px;border-radius:5px}
+
+/* ---------- footer ---------- */
+footer{flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:10px 26px;
+  border-top:1px solid var(--line-soft)}
+.dots{display:flex;gap:6px;flex:1 1 auto;flex-wrap:wrap}
+.pd{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.16);cursor:pointer;
+  transition:background .2s,transform .2s}
+.pd:hover{transform:scale(1.35)}
+.pd.done{background:rgba(245,185,66,.45)}
+.pd.now{background:var(--gold);transform:scale(1.35)}
+.steps{font-family:var(--mono);font-size:12px;color:var(--ink-dim);white-space:nowrap}
+.keys{font-size:11.5px;color:var(--ink-dim);white-space:nowrap}
+
+/* ---------- notes drawer ---------- */
+#notes{position:fixed;left:0;right:0;bottom:0;z-index:40;transform:translateY(101%);
+  transition:transform .28s ease;background:rgba(6,14,12,.97);border-top:2px solid var(--gold);
+  padding:16px 26px 18px;max-height:46vh;overflow-y:auto;backdrop-filter:blur(8px)}
+#notes.open{transform:none}
+#notes h6{margin:0 0 8px;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)}
+#notes .say{font-size:15px;line-height:1.65;max-width:1100px}
+#notes .say b{color:var(--gold-soft)}
+#notes .nxt{margin-top:10px;font-size:12.5px;color:var(--ink-dim);font-family:var(--mono)}
+
+/* ---------- overview ---------- */
+#ov{position:fixed;inset:0;z-index:50;background:rgba(4,10,9,.97);padding:34px;
+  display:none;overflow-y:auto;backdrop-filter:blur(6px)}
+#ov.open{display:block}
+#ov h3{margin:0 0 18px;font-size:16px;color:var(--gold);letter-spacing:1px;text-transform:uppercase}
+.ovgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.ovc{padding:14px;border-radius:12px;border:1px solid var(--line-soft);cursor:pointer;
+  background:rgba(255,255,255,.03);transition:border-color .2s,transform .2s}
+.ovc:hover{border-color:var(--gold);transform:translateY(-2px)}
+.ovc .i{font-family:var(--mono);font-size:11px;color:var(--gold)}
+.ovc .t{font-size:14px;font-weight:600;margin-top:4px}
+.ovc .s{font-size:11.5px;color:var(--ink-dim);margin-top:3px;line-height:1.45}
+
+@media (max-width:900px){
+  .panes{grid-template-columns:1fr}
+  .schema{grid-template-columns:repeat(2,1fr)}
+  header{padding:12px 16px}
+  main{padding:14px 16px}
+  footer{padding:9px 16px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand">Transaction<small>Cafe</small></div>
+    <div class="title-wrap">
+      <div class="slide-title" id="sTitle">—</div>
+      <div class="slide-sub" id="sSub">—</div>
+    </div>
+    <div class="badges">
+      <span class="badge" id="sTag">intro</span>
+      <span class="badge pg">PostgreSQL 15.15</span>
+      <span class="clock" id="clock">00:00</span>
+    </div>
+  </header>
+  <main id="stage"></main>
+  <footer>
+    <div class="dots" id="dots"></div>
+    <div class="steps" id="stepCount">—</div>
+    <div class="keys"><kbd>→</kbd> step &nbsp;<kbd>S</kbd> notes &nbsp;<kbd>O</kbd> map &nbsp;<kbd>F</kbd> full</div>
+  </footer>
+</div>
+
+<div id="notes">
+  <h6>Speaker notes</h6>
+  <div class="say" id="noteSay">—</div>
+  <div class="nxt" id="noteNxt"></div>
+</div>
+
+<div id="ov">
+  <h3>Run of show</h3>
+  <div class="ovgrid" id="ovGrid"></div>
+</div>
+<script>
+/* =====================================================================
+   Transaction Cafe — presenter deck
+   Every SQL line and every result below was captured from a real run
+   against PostgreSQL 15.15 (database: transaction_cafe).
+   ===================================================================== */
+const T1 = {name:'Session 1 · T1', role:'psql — terminal one'};
+const T2 = {name:'Session 2 · T2', role:'psql — terminal two'};
+
+const DECK = [
+
+/* 0 ------------------------------------------------------------------ */
+{
+ id:'title', type:'title', tag:'intro',
+ title:'Transactions in PostgreSQL — a live practical',
+ sub:'Twelve runnable demos, two terminals, one cafe',
+ steps:[{note:'Open with the story: every order at a cafe is a transaction. Money leaves a wallet, a cup leaves the counter, a line goes into the ledger. Either <b>all</b> of it happens or <b>none</b> of it does. Today we prove that on a real database — not on slides.'}]
+},
+
+/* 1 ------------------------------------------------------------------ */
+{
+ id:'schema', type:'schema', tag:'setup',
+ title:'The cafe, as four tables',
+ sub:'sql/00_setup.sql — schema, constraints and seed data',
+ steps:[
+  {note:'Walk the four tables. Point out that <b>customers</b> and <b>menu</b> carry CHECK constraints — those constraints are what will later force a rollback. This is Consistency: the database refuses to enter an invalid state.'},
+  {note:'The two CHECK constraints are the heroes of demo 2. A wallet can never go below zero, a stock count can never go below zero.'},
+  {note:'Seed values: both customers start at ₹5000. Cold Brew has only <b>3</b> cups — deliberately scarce. Three old orders are already above ₹1000, which is what the phantom-read demo will count.'}
+ ]
+},
+
+/* 2 ------------------------------------------------------------------ */
+{
+ id:'commit', type:'dual', solo:true, tag:'A — atomicity',
+ title:'Demo 1 · One order = four writes that must land together',
+ sub:'sql/01_atomicity_commit.sql — the happy path',
+ t1:{...T1, role:'Diya orders a Cappuccino (₹180)', iso:'READ COMMITTED'},
+ chips:[
+  {id:'w', k:'Diya wallet (committed)', v:'₹5000.00'},
+  {id:'s', k:'Cappuccino stock', v:'10'},
+  {id:'o', k:'Orders table', v:'3 rows'},
+  {id:'l', k:'Ledger', v:'0 rows'}
+ ],
+ steps:[
+  {who:'t1', t:'t=0', sql:'BEGIN;', out:'BEGIN', cls:'muted',
+   insight:'A transaction opens. From here on, nothing is real to anyone else until COMMIT.',
+   note:'BEGIN opens the unit of work. Stress that PostgreSQL is in autocommit by default — without BEGIN, every statement is its own transaction.'},
+  {who:'t1', t:'1 · debit', sql:"UPDATE customers SET wallet_balance = wallet_balance - 180\n WHERE name = 'Diya';", out:'UPDATE 1',
+   chips:{w:{v:'₹4820.00', n:'uncommitted', cls:'dirty'}}, flash:['w'],
+   insight:'The money is gone — <b>but only inside this transaction</b>. Any other session still sees ₹5000.00.',
+   note:'This is the moment to say: the row is now modified, but it is a private version. Postgres keeps the old version around for everyone else. That is MVCC.'},
+  {who:'t1', t:'2 · order', sql:'INSERT INTO orders (cust_id, item_id, qty, amount)\n SELECT c.cust_id, m.item_id, 1, m.price\n FROM customers c, menu m\n WHERE c.name = \'Diya\' AND m.item_name = \'Cappuccino\';', out:'INSERT 0 1',
+   chips:{o:{v:'4 rows', n:'uncommitted', cls:'dirty'}}, flash:['o'],
+   note:'Second write. Ask the class: if the power goes out right now, what should the wallet look like when the server restarts? Answer: ₹5000 — nothing was committed.'},
+  {who:'t1', t:'3 · stock', sql:"UPDATE menu SET stock_qty = stock_qty - 1\n WHERE item_name = 'Cappuccino';", out:'UPDATE 1',
+   chips:{s:{v:'9', n:'uncommitted', cls:'dirty'}}, flash:['s'],
+   note:'Third write — the cup leaves the counter.'},
+  {who:'t1', t:'4 · ledger', sql:"INSERT INTO cafe_ledger (order_id, description, amount)\n VALUES (currval('orders_order_id_seq'), 'Cappuccino x1 - Diya', 180);", out:'INSERT 0 1',
+   chips:{l:{v:'1 row', n:'uncommitted', cls:'dirty'}}, flash:['l'],
+   note:'Fourth write. Four separate statements — and the business rule is that all four are one event.'},
+  {who:'t1', t:'check', sql:"SELECT name, wallet_balance FROM customers WHERE name = 'Diya';",
+   out:' name | wallet_balance \n------+----------------\n Diya |        4820.00', cls:'ok',
+   insight:'Inside the transaction T1 sees ₹4820.00. Outside, the world is still at ₹5000.00.',
+   note:'Two truths at the same time. This is exactly what Isolation means.'},
+  {who:'t1', t:'commit', sql:'COMMIT;', out:'COMMIT', cls:'ok',
+   chips:{w:{v:'₹4820.00', n:'durable', cls:'good'}, s:{v:'9', n:'durable', cls:'good'},
+          o:{v:'4 rows', n:'durable', cls:'good'}, l:{v:'1 row', n:'durable', cls:'good'}},
+   flash:['w','s','o','l'], ins:'win',
+   insight:'<b>Atomicity</b> — all four writes became visible in the same instant. <b>Durability</b> — they are on disk before COMMIT returned.',
+   note:'Land the point: nobody ever saw three of the four writes. The switch flipped once, for everything, at COMMIT.'}
+ ]
+},
+
+/* 3 ------------------------------------------------------------------ */
+{
+ id:'rollback', type:'dual', solo:true, tag:'A — atomicity',
+ title:'Demo 2 · The failure path — one broken rule undoes everything',
+ sub:'sql/02_atomicity_rollback.sql — Shan orders 5 Cold Brews, only 3 exist',
+ t1:{...T1, role:'Shan orders 5 × Cold Brew (₹1250)', iso:'READ COMMITTED'},
+ chips:[
+  {id:'w', k:'Shan wallet (committed)', v:'₹5000.00'},
+  {id:'s', k:'Cold Brew stock', v:'3'},
+  {id:'st', k:'Transaction state', v:'idle'}
+ ],
+ steps:[
+  {who:'t1', t:'t=0', sql:'BEGIN;', out:'BEGIN', cls:'muted',
+   chips:{st:{v:'open'}}, flash:['st'],
+   note:'Set the trap deliberately: we debit the money BEFORE we check the stock. This is the classic ordering bug that transactions save you from.'},
+  {who:'t1', t:'1 · debit', sql:"UPDATE customers SET wallet_balance = wallet_balance - 1250\n WHERE name = 'Shan';", out:'UPDATE 1',
+   chips:{w:{v:'₹3750.00', n:'uncommitted', cls:'dirty'}}, flash:['w'],
+   insight:'₹1250 has left Shan\'s wallet. The cups have not been checked yet.',
+   note:'Money gone. Now ask the class what happens if the next statement fails.'},
+  {who:'t1', t:'2 · stock', sql:"UPDATE menu SET stock_qty = stock_qty - 5\n WHERE item_name = 'Cold Brew';",
+   out:'ERROR:  new row for relation "menu" violates check constraint "stock_never_negative"\nDETAIL:  Failing row contains (1, Cold Brew, 250.00, -2).', cls:'err',
+   chips:{st:{v:'aborted', cls:'bad'}}, flash:['st'], ins:'warn',
+   insight:'<b>Consistency</b> — the CHECK refuses the write. Stock would have gone to −2, so the database says no.',
+   note:'Read the DETAIL line out loud: "Failing row contains ... -2". The constraint caught an impossible world before it existed.'},
+  {who:'t1', t:'3 · ledger', sql:"INSERT INTO cafe_ledger (description, amount)\n VALUES ('Cold Brew x5 - Shan', 1250);",
+   out:'ERROR:  current transaction is aborted, commands ignored until end of transaction block', cls:'err',
+   insight:'Once a statement fails, PostgreSQL <b>blocks every later statement</b> in that transaction. You cannot half-succeed.',
+   note:'This is a PostgreSQL-specific behaviour worth naming: other engines let you continue after an error. Postgres locks the whole block until you ROLLBACK or use a SAVEPOINT.'},
+  {who:'t1', t:'end', sql:'ROLLBACK;', out:'ROLLBACK', cls:'ok',
+   chips:{w:{v:'₹5000.00', n:'restored', cls:'good'}, s:{v:'3', n:'untouched', cls:'good'}, st:{v:'idle'}},
+   flash:['w','s','st'], ins:'win',
+   insight:'<b>Atomicity</b> — the successful debit was undone with the failed one. Shan is back at ₹5000.00 and no money vanished.',
+   note:'Close the loop: without a transaction, Shan would have paid ₹1250 for coffee he never received. This single guarantee is why banks, ticketing and checkout flows all run inside transactions.'}
+ ]
+},
+
+/* 4 ------------------------------------------------------------------ */
+{
+ id:'savepoint', type:'dual', solo:true, tag:'partial undo',
+ title:'Demo 3 · SAVEPOINT — undo part of a transaction, keep the rest',
+ sub:'sql/03_savepoint.sql — Shan keeps the Espresso, cancels the cake',
+ t1:{...T1, role:'Espresso ₹120, then a cake he regrets', iso:'READ COMMITTED'},
+ chips:[
+  {id:'w', k:'Shan wallet', v:'₹5000.00'},
+  {id:'c', k:'Blueberry Cake stock', v:'6'},
+  {id:'sp', k:'Savepoint', v:'—'}
+ ],
+ steps:[
+  {who:'t1', t:'t=0', sql:"BEGIN;\nUPDATE customers SET wallet_balance = wallet_balance - 120 WHERE name = 'Shan';", out:'BEGIN\nUPDATE 1',
+   chips:{w:{v:'₹4880.00', n:'−120 espresso', cls:'dirty'}}, flash:['w'],
+   note:'Espresso charged. This is the part he keeps.'},
+  {who:'t1', t:'mark', sql:'SAVEPOINT after_espresso;', out:'SAVEPOINT', cls:'ok',
+   chips:{sp:{v:'after_espresso', cls:'good'}}, flash:['sp'],
+   insight:'A savepoint is a bookmark inside an open transaction. Nothing is committed — you simply gain a point to rewind to.',
+   note:'Analogy: a checkpoint in a game. You are still playing the same level, but you can restart from here instead of from the beginning.'},
+  {who:'t1', t:'cake', sql:"UPDATE customers SET wallet_balance = wallet_balance - 320 WHERE name = 'Shan';\nUPDATE menu SET stock_qty = stock_qty - 1 WHERE item_name = 'Blueberry Cake';", out:'UPDATE 1\nUPDATE 1',
+   chips:{w:{v:'₹4560.00', n:'−320 cake', cls:'dirty'}, c:{v:'5', n:'uncommitted', cls:'dirty'}}, flash:['w','c'],
+   note:'He adds a cake. Wallet drops to 4560, cake stock drops to 5. Then he changes his mind.'},
+  {who:'t1', t:'undo', sql:'ROLLBACK TO SAVEPOINT after_espresso;', out:'ROLLBACK', cls:'ok',
+   chips:{w:{v:'₹4880.00', n:'cake undone', cls:'good'}, c:{v:'6', n:'cake undone', cls:'good'}}, flash:['w','c'],
+   insight:'Only the work <b>after</b> the savepoint is erased. The transaction is still open and still holds the Espresso charge.',
+   note:'Important distinction: ROLLBACK TO SAVEPOINT is not ROLLBACK. The transaction continues to live.'},
+  {who:'t1', t:'end', sql:'COMMIT;', out:'COMMIT', cls:'ok',
+   chips:{w:{v:'₹4880.00', n:'durable · 5000 − 120', cls:'good'}, c:{v:'6', n:'durable', cls:'good'}, sp:{v:'released'}},
+   flash:['w','c'], ins:'win',
+   insight:'Final state: ₹4880.00 and cake stock 6. One transaction, two outcomes, both correct.',
+   note:'Real-world use: a multi-step checkout where one optional add-on fails should not throw away the whole basket. Savepoints are how ORMs implement nested transactions.'}
+ ]
+},
+
+/* 5 ------------------------------------------------------------------ */
+{
+ id:'dirty', type:'dual', tag:'I — isolation',
+ title:'Demo 4 · Dirty read — and why PostgreSQL will not give you one',
+ sub:'sql/04_dirty_read.*.sql — T2 explicitly asks for READ UNCOMMITTED',
+ t1:{...T1, role:'changes a balance, then cancels', iso:'READ COMMITTED'},
+ t2:{...T2, role:'tries to peek at uncommitted data', iso:'READ UNCOMMITTED'},
+ chips:[
+  {id:'c', k:'Committed value', v:'₹5000.00'},
+  {id:'p', k:'T1 private version', v:'—'},
+  {id:'v', k:'What T2 reads', v:'—'}
+ ],
+ steps:[
+  {who:'t1', t:'t=0', sql:"BEGIN;\nUPDATE customers SET wallet_balance = 3000 WHERE name = 'Diya';", out:'BEGIN\nUPDATE 1',
+   chips:{p:{v:'₹3000.00', n:'not committed', cls:'dirty'}}, flash:['p'],
+   insight:'T1 now holds an uncommitted ₹3000.00. The committed value on disk is still ₹5000.00.',
+   note:'Two versions of the same row now exist. In ANSI terms, ₹3000 is "dirty" data — it may never become real.'},
+  {who:'t2', t:'t=1', sql:'BEGIN TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;\nSHOW transaction_isolation;',
+   out:' transaction_isolation \n-----------------------\n read uncommitted', cls:'muted',
+   insight:'PostgreSQL <b>accepts</b> the request and even reports the level back as <code>read uncommitted</code>.',
+   note:'Pause here. Everyone expects a dirty read next, because the ANSI table on the slide says READ UNCOMMITTED allows it. Let them predict the value before you advance.'},
+  {who:'t2', t:'t=1', sql:"SELECT name, wallet_balance FROM customers WHERE name = 'Diya';",
+   out:' name | wallet_balance \n------+----------------\n Diya |        5000.00', cls:'ok',
+   chips:{v:{v:'₹5000.00', n:'clean, not dirty', cls:'good'}}, flash:['v'], ins:'win',
+   insight:'₹5000.00 — <b>not</b> ₹3000.00. PostgreSQL implements READ UNCOMMITTED as READ COMMITTED, so a dirty read is impossible here.',
+   note:'This is the big correction to the textbook table. Because of MVCC, Postgres has no mechanism to show an uncommitted row version to another session. Only three isolation levels really exist: READ COMMITTED, REPEATABLE READ, SERIALIZABLE.'},
+  {who:'t1', t:'t=3', sql:'ROLLBACK;', out:'ROLLBACK', cls:'ok',
+   chips:{p:{v:'discarded'}}, flash:['p'],
+   note:'And here is why the guarantee matters — the ₹3000 never existed at all.'},
+  {who:'t2', t:'t=4', sql:"SELECT name, wallet_balance FROM customers WHERE name = 'Diya';",
+   out:' name | wallet_balance \n------+----------------\n Diya |        5000.00', cls:'ok',
+   chips:{c:{v:'₹5000.00', cls:'good'}, v:{v:'₹5000.00', cls:'good'}}, flash:['c','v'], ins:'win',
+   insight:'Had T2 been allowed the dirty read, it would have made a decision on a number that was cancelled seconds later.',
+   note:'Tie back to the deck example: T2 reading ₹3000 and acting on it, while T1 rolls back to ₹5000, is a corrupted business decision. Postgres removes that failure mode entirely.'}
+ ]
+},
+
+/* 6 ------------------------------------------------------------------ */
+{
+ id:'nonrep', type:'dual', tag:'I — isolation',
+ title:'Demo 5 · Non-repeatable read — the same query, two answers',
+ sub:'sql/05_non_repeatable_read.*.sql — T1 at READ COMMITTED (the default)',
+ t1:{...T1, role:'accountant reading Diya twice', iso:'READ COMMITTED'},
+ t2:{...T2, role:'Diya spends money in between', iso:'READ COMMITTED'},
+ chips:[
+  {id:'r1', k:'T1 · read 1', v:'—'},
+  {id:'r2', k:'T1 · read 2', v:'—'},
+  {id:'c', k:'Committed value', v:'₹5000.00'}
+ ],
+ steps:[
+  {who:'t1', t:'t=0', sql:"BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;\nSELECT wallet_balance FROM customers WHERE name = 'Diya';",
+   out:' read_1  \n---------\n 5000.00', cls:'ok',
+   chips:{r1:{v:'₹5000.00'}}, flash:['r1'],
+   note:'READ COMMITTED takes a fresh snapshot for EVERY statement. That single fact explains everything that follows.'},
+  {who:'t2', t:'t=1', sql:"BEGIN;\nUPDATE customers SET wallet_balance = 3000 WHERE name = 'Diya';\nCOMMIT;", out:'BEGIN\nUPDATE 1\nCOMMIT', cls:'ok',
+   chips:{c:{v:'₹3000.00', n:'committed by T2', cls:'dirty'}}, flash:['c'],
+   insight:'T2 commits a real, legitimate change while T1 is still open.',
+   note:'Nothing here is a bug or a dirty read — T2 is perfectly correct. The problem is what it does to T1.'},
+  {who:'t1', t:'t=3', sql:"SELECT wallet_balance FROM customers WHERE name = 'Diya';",
+   out:' read_2  \n---------\n 3000.00', cls:'err',
+   chips:{r2:{v:'₹3000.00', cls:'bad'}}, flash:['r2'], ins:'warn',
+   insight:'<b>Non-repeatable read</b> — same transaction, same query, different answer. A report built on read 1 will not add up against read 2.',
+   note:'Make it concrete: if T1 computed a total from read 1 and a tax figure from read 2, the two numbers now disagree. Anything that reads the same data twice needs a stronger level.'},
+  {who:'t1', t:'end', sql:'COMMIT;', out:'COMMIT', cls:'muted',
+   note:'Next slide: the same script with one word changed.'}
+ ]
+},
+
+/* 7 ------------------------------------------------------------------ */
+{
+ id:'repread', type:'dual', tag:'the fix',
+ title:'Demo 6 · REPEATABLE READ — one word, problem gone',
+ sub:'sql/06_repeatable_read.*.sql — identical script, stronger isolation',
+ t1:{...T1, role:'same accountant, frozen snapshot', iso:'REPEATABLE READ'},
+ t2:{...T2, role:'same update, same timing', iso:'READ COMMITTED'},
+ chips:[
+  {id:'r1', k:'T1 · read 1', v:'—'},
+  {id:'r2', k:'T1 · read 2', v:'—'},
+  {id:'c', k:'Committed value', v:'₹5000.00'}
+ ],
+ steps:[
+  {who:'t1', t:'t=0', sql:"BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;\nSELECT wallet_balance FROM customers WHERE name = 'Diya';",
+   out:' read_1  \n---------\n 5000.00', cls:'ok',
+   chips:{r1:{v:'₹5000.00'}}, flash:['r1'],
+   insight:'At REPEATABLE READ the snapshot is taken <b>once</b>, at the first statement, and frozen for the whole transaction.',
+   note:'One line changed versus the previous demo: READ COMMITTED became REPEATABLE READ. Everything else is byte-identical.'},
+  {who:'t2', t:'t=1', sql:"BEGIN;\nUPDATE customers SET wallet_balance = 3000 WHERE name = 'Diya';\nCOMMIT;", out:'BEGIN\nUPDATE 1\nCOMMIT', cls:'ok',
+   chips:{c:{v:'₹3000.00', n:'committed by T2', cls:'dirty'}}, flash:['c'],
+   note:'T2 does exactly what it did before, at exactly the same moment.'},
+  {who:'t1', t:'t=3', sql:"SELECT wallet_balance FROM customers WHERE name = 'Diya';",
+   out:' read_2  \n---------\n 5000.00', cls:'ok',
+   chips:{r2:{v:'₹5000.00', cls:'good'}}, flash:['r2'], ins:'win',
+   insight:'Still ₹5000.00. T1 keeps reading the world as it looked when it began — consistent, even if slightly stale.',
+   note:'Name the trade-off out loud: T1 is now consistent but is reading history. That is the price of the guarantee.'},
+  {who:'t1', t:'end', sql:"COMMIT;\nSELECT wallet_balance FROM customers WHERE name = 'Diya';",
+   out:' after_commit \n--------------\n      3000.00', cls:'muted',
+   chips:{c:{v:'₹3000.00', n:'the real value', cls:'good'}}, flash:['c'],
+   insight:'Once T1 ends, its snapshot is released and it sees the current truth: ₹3000.00.',
+   note:'The old value was never wrong — it was a consistent point in time. This is snapshot isolation in one sentence.'}
+ ]
+},
+
+/* 8 ------------------------------------------------------------------ */
+{
+ id:'phantom', type:'dual', tag:'I — isolation',
+ title:'Demo 7 · Phantom read — a row that was not there before',
+ sub:'sql/07_phantom_read.*.sql — counting orders above ₹1000',
+ t1:{...T1, role:'manager counting big orders', iso:'READ COMMITTED'},
+ t2:{...T2, role:'a new ₹1200 order arrives', iso:'READ COMMITTED'},
+ chips:[
+  {id:'r1', k:'T1 · count 1', v:'—'},
+  {id:'r2', k:'T1 · count 2', v:'—'},
+  {id:'o', k:'Rows above ₹1000', v:'3'}
+ ],
+ steps:[
+  {who:'t1', t:'t=0', sql:'BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;\nSELECT count(*) FROM orders WHERE amount > 1000;',
+   out:' big_orders_read_1 \n-------------------\n                 3', cls:'ok',
+   chips:{r1:{v:'3'}}, flash:['r1'],
+   note:'Non-repeatable read was about one row changing value. A phantom is about the <b>set of rows</b> changing size.'},
+  {who:'t2', t:'t=1', sql:"BEGIN;\nINSERT INTO orders (cust_id, item_id, qty, amount, status)\n VALUES (2, 4, 4, 1200.00, 'PLACED');\nCOMMIT;", out:'BEGIN\nINSERT 0 1\nCOMMIT', cls:'ok',
+   chips:{o:{v:'4', n:'new ₹1200 order', cls:'dirty'}}, flash:['o'],
+   insight:'A brand-new row appears that matches T1\'s WHERE clause. T1 never read it, so no row-level lock could have protected it.',
+   note:'This is the key difference — you cannot lock a row that does not exist yet. That is why phantoms need a different mechanism from ordinary locking.'},
+  {who:'t1', t:'t=3', sql:'SELECT count(*) FROM orders WHERE amount > 1000;',
+   out:' big_orders_read_2 \n-------------------\n                 4', cls:'err',
+   chips:{r2:{v:'4', cls:'bad'}}, flash:['r2'], ins:'warn',
+   insight:'<b>Phantom read</b> — 3 became 4 inside one transaction. Totals, averages and audits computed across the two reads disagree.',
+   note:'Exactly the example from the slides: three rows, then four. Ask what happens if T1 was writing a daily report at that moment.'}
+ ]
+},
+
+/* 9 ------------------------------------------------------------------ */
+{
+ id:'nophantom', type:'dual', tag:'the fix',
+ title:'Demo 8 · In PostgreSQL, REPEATABLE READ already blocks phantoms',
+ sub:'sql/08_phantom_prevented.*.sql — where the textbook table and PostgreSQL disagree',
+ t1:{...T1, role:'same count, frozen snapshot', iso:'REPEATABLE READ'},
+ t2:{...T2, role:'same ₹1200 insert', iso:'READ COMMITTED'},
+ chips:[
+  {id:'r1', k:'T1 · count 1', v:'—'},
+  {id:'r2', k:'T1 · count 2', v:'—'},
+  {id:'o', k:'Rows above ₹1000', v:'3'}
+ ],
+ steps:[
+  {who:'t1', t:'t=0', sql:'BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;\nSELECT count(*) FROM orders WHERE amount > 1000;',
+   out:' big_orders_read_1 \n-------------------\n                 3', cls:'ok',
+   chips:{r1:{v:'3'}}, flash:['r1'],
+   note:'Set up the prediction: the ANSI table says REPEATABLE READ still allows phantom reads. Ask the class what they expect.'},
+  {who:'t2', t:'t=1', sql:"BEGIN;\nINSERT INTO orders (...) VALUES (2, 4, 4, 1200.00, 'PLACED');\nCOMMIT;", out:'INSERT 0 1\nCOMMIT', cls:'ok',
+   chips:{o:{v:'4', n:'committed by T2', cls:'dirty'}}, flash:['o'],
+   note:'Identical insert, identical timing.'},
+  {who:'t1', t:'t=3', sql:'SELECT count(*) FROM orders WHERE amount > 1000;',
+   out:' big_orders_read_2 \n-------------------\n                 3', cls:'ok',
+   chips:{r2:{v:'3', cls:'good'}}, flash:['r2'], ins:'win',
+   insight:'Still 3. PostgreSQL\'s REPEATABLE READ is <b>snapshot isolation</b>, and a frozen snapshot cannot show a row created after it.',
+   note:'This is the second correction to the textbook. The ANSI standard defines the MINIMUM a level must prevent; an engine is free to prevent more. Postgres does.'},
+  {who:'t1', t:'end', sql:'COMMIT;\nSELECT count(*) FROM orders WHERE amount > 1000;',
+   out:' after_commit \n--------------\n            4', cls:'muted',
+   chips:{o:{v:'4', n:'the real count', cls:'good'}}, flash:['o'],
+   insight:'The phantom row was always there — T1 simply was not allowed to see it mid-flight.',
+   note:'Close: "prevented" does not mean "blocked". T2 was never slowed down. Snapshot isolation buys consistency without blocking readers or writers.'}
+ ]
+},
+
+/* 10 ----------------------------------------------------------------- */
+{
+ id:'lost', type:'dual', tag:'write conflict',
+ title:'Demo 9 · Two baristas sell the same last cups',
+ sub:'sql/09_lost_update.*.sql — read-then-write from the same starting number',
+ t1:{...T1, role:'sells 2 Cold Brews', iso:'REPEATABLE READ'},
+ t2:{...T2, role:'also sells 2 Cold Brews', iso:'REPEATABLE READ'},
+ chips:[
+  {id:'a', k:'T1 read', v:'—'},
+  {id:'b', k:'T2 read', v:'—'},
+  {id:'s', k:'Cold Brew stock', v:'3'}
+ ],
+ steps:[
+  {who:'t1', t:'t=0', sql:"SELECT stock_qty FROM menu WHERE item_name = 'Cold Brew';",
+   out:' t1_sees \n---------\n       3', cls:'ok',
+   chips:{a:{v:'3'}}, flash:['a'],
+   note:'Both terminals are about to compute the new stock in application code — the classic read-modify-write pattern.'},
+  {who:'t2', t:'t=0', sql:"SELECT stock_qty FROM menu WHERE item_name = 'Cold Brew';",
+   out:' t2_sees \n---------\n       3', cls:'ok',
+   chips:{b:{v:'3'}}, flash:['b'],
+   insight:'Both read <b>3</b>. Both will compute 3 − 2 = 1. One of those answers has to be wrong.',
+   note:'The lost update in one line: two correct calculations from the same stale input produce one wrong result. Four cups get sold out of three.'},
+  {who:'t1', t:'t=2', sql:"UPDATE menu SET stock_qty = 1 WHERE item_name = 'Cold Brew';\nCOMMIT;", out:'UPDATE 1\nCOMMIT', cls:'ok',
+   chips:{s:{v:'1', n:'T1 committed', cls:'dirty'}}, flash:['s'],
+   note:'T1 wins the race and commits first.'},
+  {who:'t2', t:'t=3', sql:"UPDATE menu SET stock_qty = 1 WHERE item_name = 'Cold Brew';",
+   out:'ERROR:  could not serialize access due to concurrent update', cls:'err',
+   ins:'warn',
+   insight:'SQLSTATE <b>40001</b>. T2\'s snapshot is older than the row it is trying to overwrite, so PostgreSQL aborts it instead of losing T1\'s work.',
+   note:'This is the headline: at REPEATABLE READ and above, Postgres refuses to let a write silently overwrite a change it could not see. Your application must catch 40001 and retry the transaction.'},
+  {who:'t2', t:'t=3', sql:"SELECT stock_qty FROM menu WHERE item_name = 'Cold Brew';",
+   out:' final_stock \n-------------\n           1', cls:'ok',
+   chips:{s:{v:'1', n:'T1 survived, T2 aborted', cls:'good'}}, flash:['s'],
+   insight:'No update was lost — one transaction simply has to run again.',
+   note:'Every serious Postgres application has a retry loop around 40001. Show them that this is expected, not exceptional.'}
+ ]
+},
+
+/* 11 ----------------------------------------------------------------- */
+{
+ id:'forupdate', type:'dual', tag:'the fix',
+ title:'Demo 10 · SELECT … FOR UPDATE — make the second barista wait',
+ sub:'sql/10_for_update.*.sql — pessimistic locking, no retry needed',
+ t1:{...T1, role:'locks the row, then sells 2', iso:'READ COMMITTED'},
+ t2:{...T2, role:'blocks, wakes up, sells 1', iso:'READ COMMITTED'},
+ chips:[
+  {id:'l', k:'Row lock', v:'free'},
+  {id:'b', k:'T2 status', v:'—'},
+  {id:'s', k:'Cold Brew stock', v:'3'}
+ ],
+ steps:[
+  {who:'t1', t:'t=0', sql:"BEGIN;\nSELECT stock_qty FROM menu\n WHERE item_name = 'Cold Brew' FOR UPDATE;",
+   out:' t1_locked_read \n----------------\n              3', cls:'ok',
+   chips:{l:{v:'held by T1', cls:'dirty'}}, flash:['l'],
+   insight:'<code>FOR UPDATE</code> takes a row-level write lock at read time — the row is reserved before anyone computes anything.',
+   note:'Contrast with the previous demo: there, both sessions read freely and one lost. Here the read itself claims the row.'},
+  {who:'t2', t:'t=1', sql:"BEGIN;\nSELECT stock_qty FROM menu\n WHERE item_name = 'Cold Brew' FOR UPDATE;",
+   out:'…waiting for T1 to release the lock', cls:'wait',
+   chips:{b:{v:'blocked', cls:'bad'}}, flash:['b'],
+   insight:'T2 does not fail and does not read stale data — it simply <b>waits</b>.',
+   note:'Point at the difference in cost: demo 9 paid with an aborted transaction, this pays with waiting time. Optimistic versus pessimistic.'},
+  {who:'t1', t:'t=2', sql:"UPDATE menu SET stock_qty = stock_qty - 2 WHERE item_name = 'Cold Brew';\nCOMMIT;", out:'UPDATE 1\nCOMMIT', cls:'ok',
+   chips:{l:{v:'released'}, s:{v:'1', n:'T1 sold 2', cls:'dirty'}}, flash:['l','s'],
+   note:'Also notice the UPDATE is written as stock_qty − 2, not "= 1". Let the database do the arithmetic on the current value.'},
+  {who:'t2', t:'t=2', sql:"-- the blocked SELECT returns now:",
+   out:' t2_read_after_wait \n--------------------\n                  1', cls:'ok',
+   chips:{b:{v:'running', cls:'good'}}, flash:['b'],
+   insight:'T2 wakes up and reads <b>1</b> — the fresh value, not the 3 it would have read a second earlier.',
+   note:'This is the whole trick: the lock turned a race into a queue.'},
+  {who:'t2', t:'end', sql:"UPDATE menu SET stock_qty = stock_qty - 1 WHERE item_name = 'Cold Brew';\nCOMMIT;\nSELECT stock_qty FROM menu WHERE item_name = 'Cold Brew';",
+   out:' final_stock \n-------------\n           0', cls:'ok',
+   chips:{s:{v:'0', n:'3 − 2 − 1, nothing lost', cls:'good'}}, flash:['s'], ins:'win',
+   insight:'3 − 2 − 1 = 0. Both sales succeeded, no transaction was thrown away, no cup was oversold.',
+   note:'Rule of thumb to leave them with: high contention on a few hot rows → FOR UPDATE. Low contention, long transactions → snapshot isolation plus a retry on 40001.'}
+ ]
+},
+
+/* 12 ----------------------------------------------------------------- */
+{
+ id:'deadlock', type:'dual', tag:'locking',
+ title:'Demo 11 · Deadlock — two transactions holding each other hostage',
+ sub:'sql/11_deadlock.*.sql — same two rows, opposite order',
+ t1:{...T1, role:'locks Shan, then wants Diya', iso:'READ COMMITTED'},
+ t2:{...T2, role:'locks Diya, then wants Shan', iso:'READ COMMITTED'},
+ chips:[
+  {id:'sh', k:'Row: Shan', v:'free'},
+  {id:'di', k:'Row: Diya', v:'free'},
+  {id:'r', k:'Resolution', v:'—'}
+ ],
+ steps:[
+  {who:'t1', t:'t=0', sql:"BEGIN;\nUPDATE customers SET wallet_balance = wallet_balance - 100 WHERE name = 'Shan';", out:'UPDATE 1',
+   chips:{sh:{v:'locked by T1', cls:'dirty'}}, flash:['sh'],
+   note:'T1 grabs Shan first.'},
+  {who:'t2', t:'t=0', sql:"BEGIN;\nUPDATE customers SET wallet_balance = wallet_balance - 50 WHERE name = 'Diya';", out:'UPDATE 1',
+   chips:{di:{v:'locked by T2', cls:'dirty'}}, flash:['di'],
+   insight:'Each transaction now holds exactly the row the other one is about to ask for.',
+   note:'Draw the cycle on the board: T1 → Diya → T2 → Shan → T1. A cycle in the wait-for graph is the formal definition of a deadlock.'},
+  {who:'t1', t:'t=2', sql:"UPDATE customers SET wallet_balance = wallet_balance + 100 WHERE name = 'Diya';",
+   out:'…waiting for the lock on Diya', cls:'wait',
+   note:'T1 blocks.'},
+  {who:'t2', t:'t=2', sql:"UPDATE customers SET wallet_balance = wallet_balance + 50 WHERE name = 'Shan';",
+   out:'ERROR:  deadlock detected\nDETAIL:  Process 77417 waits for ShareLock on transaction 1608; blocked by process 77416.\n         Process 77416 waits for ShareLock on transaction 1607; blocked by process 77417.\nCONTEXT:  while updating tuple (0,1) in relation "customers"', cls:'err',
+   chips:{r:{v:'T2 killed', cls:'bad'}}, flash:['r'], ins:'warn',
+   insight:'SQLSTATE <b>40P01</b>. PostgreSQL detects the cycle after ~1 second and kills one transaction so the other can finish.',
+   note:'The deadlock detector runs on a timer (deadlock_timeout, default 1s). It picks a victim — you do not choose which one. Read the DETAIL lines; they name both processes and both transactions.'},
+  {who:'t1', t:'t=2', sql:'COMMIT;',
+   out:' name | wallet_balance \n------+----------------\n Shan |        4900.00\n Diya |        5100.00', cls:'ok',
+   chips:{sh:{v:'free'}, di:{v:'free'}, r:{v:'T1 committed', cls:'good'}}, flash:['sh','di','r'],
+   insight:'T1 completed its transfer. The cure is discipline, not configuration: <b>always lock rows in a consistent order</b>.',
+   note:'Practical fix: sort the IDs before locking, so every transaction in the system takes locks in the same sequence. Then a cycle can never form.'}
+ ]
+},
+
+/* 13 ----------------------------------------------------------------- */
+{
+ id:'durable', type:'dual', solo:true, tag:'D — durability',
+ title:'Demo 12 · Durability — the order is on disk before COMMIT returns',
+ sub:'sql/12_durability_wal.sql — watching the write-ahead log move',
+ t1:{...T1, role:'one committed order, measured in WAL bytes', iso:'READ COMMITTED'},
+ chips:[
+  {id:'f', k:'fsync', v:'on'},
+  {id:'sc', k:'synchronous_commit', v:'on'},
+  {id:'w', k:'WAL position', v:'—'}
+ ],
+ steps:[
+  {who:'t1', t:'config', sql:'SHOW fsync;\nSHOW synchronous_commit;\nSHOW wal_level;',
+   out:' fsync: on\n synchronous_commit: on\n wal_level: replica', cls:'ok',
+   insight:'These two switches <b>are</b> durability. Turn them off and COMMIT starts lying to you.',
+   note:'fsync=on forces the write down to physical disk. synchronous_commit=on means COMMIT does not return until that flush completes. People disable these for speed and then lose data in a power cut.'},
+  {who:'t1', t:'before', sql:'SELECT pg_current_wal_lsn();',
+   out:' wal_before \n------------\n 0/35C2978', cls:'muted',
+   chips:{w:{v:'0/35C2978'}}, flash:['w'],
+   note:'The LSN is a byte offset into the write-ahead log. Treat it as the database\'s odometer.'},
+  {who:'t1', t:'order', sql:"BEGIN;\n  UPDATE customers SET wallet_balance = wallet_balance - 250 WHERE name = 'Shan';\n  INSERT INTO cafe_ledger (description, amount) VALUES ('Cold Brew x1 - Shan', 250);\nCOMMIT;", out:'COMMIT', cls:'ok',
+   note:'One ordinary order.'},
+  {who:'t1', t:'after', sql:'SELECT pg_current_wal_lsn();',
+   out:' wal_after \n-----------\n 0/35C2B88', cls:'ok',
+   chips:{w:{v:'0/35C2B88', n:'+528 bytes, flushed', cls:'good'}}, flash:['w'], ins:'win',
+   insight:'The odometer moved by 528 bytes <b>before</b> COMMIT returned. Pull the plug now and recovery replays that log — the order survives.',
+   note:'Sequence to say out loud: write to WAL, flush WAL to disk, return COMMIT, update the data files later. The table pages can lag; the log never does. That is why the data page order and the durability order are different things.'}
+ ]
+},
+
+/* 14 ----------------------------------------------------------------- */
+{
+ id:'matrix', type:'matrix', tag:'reference',
+ title:'Isolation levels — the standard, and what PostgreSQL actually does',
+ sub:'Tested on this database, not copied from a textbook',
+ steps:[
+  {note:'Build this table row by row. The left half is the ANSI standard the slides quoted; the blue lines are what we just measured on this server.'},
+  {note:'READ UNCOMMITTED: the standard permits all three anomalies. PostgreSQL silently upgrades it — demo 4 proved it.'},
+  {note:'READ COMMITTED: the default. Dirty reads gone; non-repeatable and phantom reads both demonstrated live in demos 5 and 7.'},
+  {note:'REPEATABLE READ: the standard still allows phantoms. PostgreSQL prevents them, because snapshot isolation freezes the whole visible set — demos 6 and 8.'},
+  {note:'SERIALIZABLE: everything prevented, and it also catches write skew that snapshots miss. Cost: more 40001 errors, so you need a retry loop.'},
+  {note:'Leave the closing line on screen: you do not choose an isolation level for elegance, you choose it for the anomaly you cannot afford.'}
+ ]
+},
+
+/* 15 ----------------------------------------------------------------- */
+{
+ id:'takeaway', type:'bullets', tag:'takeaway',
+ title:'What to carry out of the cafe',
+ sub:'Six rules that survive the exam and the job',
+ steps:[
+  {note:'Rule one — the whole reason transactions exist.'},
+  {note:'Rule two — errors are normal; plan the undo path, not just the happy path.'},
+  {note:'Rule three — the default is READ COMMITTED and it is not always enough.'},
+  {note:'Rule four — snapshot isolation is not the same as locking. Readers never block writers in Postgres.'},
+  {note:'Rule five — 40001 and 40P01 are application-level responsibilities, not database bugs.'},
+  {note:'Rule six — keep transactions short. Every guarantee above gets cheaper when the transaction ends quickly.'},
+  {note:'Close with the line from the deck: every real-world payment, booking or order is a transaction at work. Then point them at the sql/ folder to run all twelve themselves.'}
+ ]
+}
+];
+</script>
+<script>
+/* ===================== engine ===================== */
+const $ = s => document.querySelector(s);
+const stage = $('#stage');
+let si = 0, pi = 0;                 // slide index, step index
+
+const KW = /\b(BEGIN|COMMIT|ROLLBACK|SAVEPOINT|SELECT|INSERT|UPDATE|DELETE|FROM|WHERE|SET|VALUES|INTO|AND|OR|ORDER BY|GROUP BY|TRANSACTION|ISOLATION|LEVEL|READ|WRITE|UNCOMMITTED|COMMITTED|REPEATABLE|SERIALIZABLE|FOR UPDATE|SHOW|TO|count)\b/g;
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const hl  = s => esc(s).replace(KW, m => '<span class="kw">'+m+'</span>');
+
+/* ---------- static bodies ---------- */
+function titleBody(){
+  return `<div class="hero">
+    <div class="cup">&#9749;</div>
+    <h1>Transactions in <em>PostgreSQL</em></h1>
+    <p>Twelve demos run live against a real PostgreSQL 15.15 server. Every result on the
+       following slides was captured from an actual session — nothing here is illustrative.</p>
+    <div class="hero-chips">
+      <span>&#9679; Atomicity &amp; Rollback</span><span>&#9679; Savepoints</span>
+      <span>&#9679; Dirty / Non-repeatable / Phantom reads</span><span>&#9679; Isolation levels</span>
+      <span>&#9679; Lost updates &amp; 40001</span><span>&#9679; Deadlocks &amp; 40P01</span>
+      <span>&#9679; WAL durability</span>
+    </div>
+    <div class="kbd-hint"><kbd>&rarr;</kbd> or <kbd>Space</kbd> to step &nbsp;·&nbsp;
+      <kbd>&darr;</kbd> next slide &nbsp;·&nbsp; <kbd>S</kbd> speaker notes &nbsp;·&nbsp;
+      <kbd>O</kbd> run of show &nbsp;·&nbsp; <kbd>F</kbd> full screen</div>
+  </div>`;
+}
+
+const TABLES = [
+ {n:'customers', p:'Who is ordering, and how much money they are carrying.',
+  c:['<b>cust_id</b> SERIAL PK','<b>name</b> TEXT','<b>wallet_balance</b> NUMERIC(10,2)','<span class="ck">CHECK (wallet_balance &gt;= 0)</span>']},
+ {n:'menu', p:'What is on the counter and how many are left.',
+  c:['<b>item_id</b> SERIAL PK','<b>item_name</b> TEXT','<b>price</b> NUMERIC(10,2)','<b>stock_qty</b> INT','<span class="ck">CHECK (stock_qty &gt;= 0)</span>']},
+ {n:'orders', p:'One row per order placed at the counter.',
+  c:['<b>order_id</b> SERIAL PK','<b>cust_id</b> &rarr; customers','<b>item_id</b> &rarr; menu','<b>qty</b> INT','<b>amount</b> NUMERIC(10,2)','<b>status</b> TEXT']},
+ {n:'cafe_ledger', p:'The permanent money record — what must survive a crash.',
+  c:['<b>entry_id</b> SERIAL PK','<b>order_id</b> &rarr; orders','<b>description</b> TEXT','<b>amount</b> NUMERIC(10,2)','<b>entry_time</b> TIMESTAMP']}
+];
+
+function schemaBody(step){
+  let h = '<div class="schema">';
+  TABLES.forEach((t,i)=>{
+    const dim = (step === 0 && i > 1) ? '' : '';
+    h += `<div class="tbl" style="animation-delay:${i*70}ms">
+      <h4>${t.n}</h4><div class="pur">${t.p}</div>
+      <ul>${t.c.map(c=>`<li>${c}</li>`).join('')}</ul></div>`;
+  });
+  if(step >= 1){
+    h += `<div class="seed" style="animation-delay:120ms">
+      <div class="insight" style="flex:1"><div class="ic">&#128737;</div><div class="tx">
+      The two <b>CHECK</b> constraints are not decoration. <code>stock_qty &gt;= 0</code> is what
+      fails in demo 2 and forces a whole transaction to be undone — that is <b>Consistency</b>
+      protecting <b>Atomicity</b>.</div></div></div>`;
+  }
+  if(step >= 2){
+    h += `<div class="state" style="margin-top:2px">
+      <div class="chip"><div class="k">Shan wallet</div><div class="v">&#8377;5000.00</div></div>
+      <div class="chip"><div class="k">Diya wallet</div><div class="v">&#8377;5000.00</div></div>
+      <div class="chip"><div class="k">Cold Brew stock</div><div class="v">3</div><div class="n">deliberately scarce</div></div>
+      <div class="chip"><div class="k">Cappuccino stock</div><div class="v">10</div></div>
+      <div class="chip"><div class="k">Orders &gt; &#8377;1000</div><div class="v">3</div><div class="n">for the phantom demo</div></div>
+    </div>`;
+  }
+  return h;
+}
+
+const Y = '<span class="yes">Yes</span>';
+const N = '<span class="no">No</span>';
+const PGN = Y + '<span class="pg-note">PostgreSQL: No</span>';
+
+const ISO_ROWS = [
+ ['READ UNCOMMITTED', PGN, Y, Y,
+  'PostgreSQL silently runs this as READ COMMITTED. Demo 4 asked for it and still read &#8377;5000.00, never the uncommitted &#8377;3000.00.'],
+ ['READ COMMITTED', N, Y, Y,
+  'The default. A fresh snapshot per statement: demo 5 saw 5000 &rarr; 3000, demo 7 saw 3 &rarr; 4 rows.'],
+ ['REPEATABLE READ', N, N, PGN,
+  'Snapshot isolation freezes the whole visible set, so phantoms go too &mdash; demo 8 counted 3 twice. Write conflicts now raise 40001 (demo 9).'],
+ ['SERIALIZABLE', N, N, N,
+  'Adds predicate locking to catch write skew that snapshots miss. Expect more 40001 &mdash; always retry.']
+];
+
+function matrixBody(step){
+  let h = `<div class="matrix"><table class="iso"><thead><tr>
+    <th>Isolation level</th><th>Dirty read<br><small style="opacity:.7;font-weight:400">ANSI</small></th><th>Non-repeatable read<br><small style="opacity:.7;font-weight:400">ANSI</small></th><th>Phantom read<br><small style="opacity:.7;font-weight:400">ANSI</small></th><th>What this database actually did</th></tr></thead><tbody>`;
+  ISO_ROWS.forEach((r,i)=>{
+    const on = step >= i+1 ? 'on' : '';
+    h += `<tr class="${on}"><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td>
+      <td style="font-size:12.5px;color:var(--ink-dim);line-height:1.45">${r[4]}</td></tr>`;
+  });
+  h += '</tbody></table>';
+  if(step >= 5){
+    h += `<div class="insight"><div class="ic">&#127919;</div><div class="tx">
+      <b>Yes / No</b> columns are the ANSI standard — what a level is <i>allowed</i> to permit.
+      An engine may prevent more than the standard requires, and PostgreSQL does.
+      Pick a level for the anomaly you cannot afford, then pay for it in retries or in waiting.</div></div>`;
+  }
+  h += '</div>';
+  return h;
+}
+
+const RULES = [
+ ['All or nothing is the whole point','A transaction turns many statements into one event. Demo 2: the debit succeeded, the stock write failed, and the debit was erased with it.'],
+ ['Design the undo path','Wrap every multi-step write in <code>BEGIN … COMMIT</code>, use <code>SAVEPOINT</code> for optional steps, and never leave a transaction open waiting on a human.'],
+ ['Know your default','PostgreSQL gives you <code>READ COMMITTED</code>: a fresh snapshot per statement. Two reads of the same row in one transaction can legitimately differ.'],
+ ['Snapshots, not locks','<code>REPEATABLE READ</code> freezes what you can see at the first statement. Readers never block writers and writers never block readers.'],
+ ['Catch 40001 and 40P01','<code>could not serialize access</code> and <code>deadlock detected</code> are normal under load. Retry the transaction; do not weaken the isolation level to hide them.'],
+ ['Lock in a fixed order, and be brief','Order your row locks consistently to make deadlocks impossible, and keep transactions short so locks and snapshots are released fast.']
+];
+
+function bulletsBody(step){
+  let h = '<div class="bullets">';
+  RULES.forEach((r,i)=>{
+    if(step >= i)
+      h += `<div class="bullet" style="animation-delay:${i*40}ms">
+        <div class="n">${i+1}</div><div><h5>${r[0]}</h5><p>${r[1]}</p></div></div>`;
+  });
+  if(step >= 6)
+    h += `<div class="insight win" style="margin-top:4px"><div class="ic">&#9749;</div><div class="tx">
+      <b>&ldquo;Every real-world payment, booking, or order &mdash; is a transaction at work.&rdquo;</b>
+      &nbsp; Run all twelve yourself: <code>psql -d transaction_cafe -f sql/00_setup.sql</code>, then
+      <code>./run_demo.sh 05_non_repeatable_read</code>.</div></div>`;
+  h += '</div>';
+  return h;
+}
+
+/* ---------- session-pane slides ---------- */
+function paneHTML(meta, who, slide, step){
+  // keep the original step index so only the line that just ran animates
+  const steps = slide.steps.slice(0, step+1)
+                  .map((s,idx)=>({...s, idx}))
+                  .filter(s => s.who === who);
+  const liveNow = slide.steps[step] && slide.steps[step].who === who;
+  let body = '';
+  steps.forEach((s,i)=>{
+    const last  = i === steps.length-1;
+    const fresh = s.idx === step;
+    body += `<div class="line${fresh?' fresh':''}">
+      <div><span class="tm">${s.t||''}</span><span class="sql">${hl(s.sql)}</span></div>
+      ${s.out ? `<div class="out ${s.cls||''}">${esc(s.out)}</div>` : ''}
+    </div>`;
+    if(last && liveNow) body += '<div class="cursor"></div>';
+  });
+  if(!body) body = '<div class="out muted">idle — waiting to start</div>';
+  return `<div class="pane${liveNow?' live':''}">
+    <div class="pane-head"><span class="dot"></span>
+      <span class="pane-name">${meta.name}</span>
+      <span class="pane-role">${meta.role}</span>
+      ${meta.iso ? `<span class="pane-iso">${meta.iso}</span>`:''}
+    </div>
+    <div class="pane-body">${body}</div></div>`;
+}
+
+function chipsHTML(slide, step){
+  const cur = {};
+  (slide.chips||[]).forEach(c => cur[c.id] = {...c});
+  for(let i=0;i<=step;i++){
+    const p = slide.steps[i].chips || {};
+    for(const k in p) cur[k] = {...cur[k], ...p[k]};
+  }
+  const flash = (slide.steps[step] && slide.steps[step].flash) || [];
+  return '<div class="state">' + (slide.chips||[]).map(c=>{
+    const s = cur[c.id];
+    return `<div class="chip ${s.cls||''}${flash.includes(c.id)?' flash':''}">
+      <div class="k">${s.k}</div><div class="v">${s.v}</div>
+      ${s.n?`<div class="n">${s.n}</div>`:''}</div>`;
+  }).join('') + '</div>';
+}
+
+function dualBody(slide, step){
+  const s = slide.steps[step] || {};
+  let h = `<div class="panes${slide.solo?' solo':''}">`;
+  h += paneHTML(slide.t1,'t1',slide,step);
+  if(!slide.solo) h += paneHTML(slide.t2,'t2',slide,step);
+  h += '</div>';
+  h += chipsHTML(slide, step);
+  const ins = (()=>{ for(let i=step;i>=0;i--) if(slide.steps[i].insight)
+                      return {tx:slide.steps[i].insight, k:slide.steps[i].ins||''}; return null; })();
+  h += `<div class="insight ${ins?ins.k:''}" style="${ins?'':'opacity:.35'}">
+      <div class="ic">${ins && ins.k==='warn' ? '&#9888;&#65039;' : ins && ins.k==='win' ? '&#9989;' : '&#128161;'}</div>
+      <div class="tx">${ins ? ins.tx : 'Press &rarr; to run the first statement.'}</div></div>`;
+  return h;
+}
+
+/* ---------- render ---------- */
+function bodyFor(slide, step){
+  switch(slide.type){
+    case 'title':  return titleBody();
+    case 'schema': return schemaBody(step);
+    case 'matrix': return matrixBody(step);
+    case 'bullets':return bulletsBody(step);
+    default:       return dualBody(slide, step);
+  }
+}
+
+function render(){
+  const slide = DECK[si];
+  pi = Math.max(0, Math.min(pi, slide.steps.length-1));
+  stage.innerHTML = `<div class="slide active">${bodyFor(slide, pi)}</div>`;
+  $('#sTitle').textContent = slide.title;
+  $('#sSub').textContent   = slide.sub;
+  $('#sTag').textContent   = slide.tag;
+  $('#stepCount').textContent = `slide ${si+1}/${DECK.length} · step ${pi+1}/${slide.steps.length}`;
+  $('#noteSay').innerHTML  = slide.steps[pi].note || '—';
+  const nxt = pi+1 < slide.steps.length
+      ? `next → step ${pi+2} of this slide`
+      : (si+1 < DECK.length ? `next → ${DECK[si+1].title}` : 'end of deck');
+  $('#noteNxt').textContent = nxt;
+  // auto-scroll panes to the bottom
+  document.querySelectorAll('.pane-body').forEach(p => p.scrollTop = p.scrollHeight);
+  renderDots();
+}
+
+function renderDots(){
+  const d = $('#dots');
+  d.innerHTML = DECK.map((s,i)=>
+    `<span class="pd ${i<si?'done':''}${i===si?' now':''}" data-i="${i}" title="${s.title}"></span>`).join('');
+  d.querySelectorAll('.pd').forEach(el =>
+    el.onclick = () => { si = +el.dataset.i; pi = 0; render(); });
+}
+
+/* ---------- navigation ---------- */
+function next(){
+  const s = DECK[si];
+  if(pi < s.steps.length-1) pi++;
+  else if(si < DECK.length-1){ si++; pi = 0; }
+  else return;
+  render();
+}
+function prev(){
+  if(pi > 0) pi--;
+  else if(si > 0){ si--; pi = DECK[si].steps.length-1; }
+  else return;
+  render();
+}
+function slideJump(d){
+  const n = si + d;
+  if(n < 0 || n >= DECK.length) return;
+  si = n; pi = 0; render();
+}
+
+document.addEventListener('keydown', e=>{
+  if($('#ov').classList.contains('open') && e.key !== 'o' && e.key !== 'O' && e.key !== 'Escape') return;
+  switch(e.key){
+    case 'ArrowRight': case ' ': case 'PageDown': e.preventDefault(); next(); break;
+    case 'ArrowLeft':  case 'PageUp': e.preventDefault(); prev(); break;
+    case 'ArrowDown':  e.preventDefault(); slideJump(1); break;
+    case 'ArrowUp':    e.preventDefault(); slideJump(-1); break;
+    case 'Home':       si=0; pi=0; render(); break;
+    case 'End':        si=DECK.length-1; pi=DECK[si].steps.length-1; render(); break;
+    case 'f': case 'F':
+      if(document.fullscreenElement) document.exitFullscreen();
+      else document.documentElement.requestFullscreen(); break;
+    case 's': case 'S': $('#notes').classList.toggle('open'); break;
+    case 'o': case 'O': $('#ov').classList.toggle('open'); break;
+    case 'Escape': $('#ov').classList.remove('open'); $('#notes').classList.remove('open'); break;
+    case 'r': case 'R': pi = 0; render(); break;
+  }
+});
+stage.addEventListener('click', e => { if(!e.target.closest('.pane-body')) next(); });
+
+/* ---------- overview ---------- */
+$('#ovGrid').innerHTML = DECK.map((s,i)=>
+  `<div class="ovc" data-i="${i}"><div class="i">${String(i+1).padStart(2,'0')} · ${s.tag}</div>
+   <div class="t">${s.title}</div><div class="s">${s.sub||''}</div></div>`).join('');
+$('#ovGrid').querySelectorAll('.ovc').forEach(el =>
+  el.onclick = () => { si = +el.dataset.i; pi = 0; $('#ov').classList.remove('open'); render(); });
+
+/* ---------- timer ---------- */
+const t0 = Date.now();
+setInterval(()=>{
+  const s = Math.floor((Date.now()-t0)/1000);
+  $('#clock').textContent =
+    String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+}, 1000);
+
+render();
+</script>
+</body>
+</html>
