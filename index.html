@@ -43,20 +43,20 @@ header{
   flex:0 0 auto;display:flex;align-items:center;gap:18px;
   padding:14px 26px;border-bottom:1px solid var(--line-soft);
 }
-.brand{font-family:'Caveat',cursive;font-size:30px;line-height:1;color:var(--gold);
+.brand{font-family:'Caveat',cursive;font-size:34px;line-height:1;color:var(--gold);
   text-shadow:0 0 14px rgba(245,185,66,.45);white-space:nowrap}
-.brand small{display:block;font-size:15px;opacity:.75;margin-top:-2px}
+.brand small{display:block;font-size:17px;opacity:.75;margin-top:-2px}
 .title-wrap{flex:1 1 auto;min-width:0}
-.slide-title{font-size:19px;font-weight:600;letter-spacing:.2px;
+.slide-title{font-size:24px;font-weight:600;letter-spacing:.2px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.slide-sub{font-size:12.5px;color:var(--ink-dim);margin-top:2px;
+.slide-sub{font-size:15px;color:var(--ink-dim);margin-top:2px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .badges{display:flex;gap:8px;align-items:center;flex:0 0 auto}
-.badge{font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;
+.badge{font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;
   padding:5px 11px;border-radius:999px;border:1px solid var(--line);color:var(--gold-soft);
   background:rgba(245,185,66,.08);white-space:nowrap}
 .badge.pg{border-color:rgba(127,178,255,.5);color:var(--blue);background:rgba(127,178,255,.08)}
-.clock{font-family:var(--mono);font-size:13px;color:var(--ink-dim);min-width:52px;text-align:right}
+.clock{font-family:var(--mono);font-size:14px;color:var(--ink-dim);min-width:58px;text-align:right}
 
 /* ---------- stage ---------- */
 main{flex:1 1 auto;min-height:0;padding:20px 26px;display:flex;flex-direction:column;gap:14px}
@@ -72,9 +72,9 @@ main{flex:1 1 auto;min-height:0;padding:20px 26px;display:flex;flex-direction:co
 .hero .cup{font-size:clamp(46px,7vw,84px);filter:drop-shadow(0 6px 24px rgba(245,185,66,.35))}
 .hero-chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:8px}
 .hero-chips span{border:1px solid var(--line-soft);border-radius:999px;padding:8px 15px;
-  font-size:13px;color:var(--gold-soft);background:rgba(245,185,66,.06)}
-.kbd-hint{margin-top:18px;font-size:12.5px;color:var(--ink-dim)}
-kbd{font-family:var(--mono);font-size:11.5px;background:rgba(255,255,255,.08);
+  font-size:16px;color:var(--gold-soft);background:rgba(245,185,66,.06)}
+.kbd-hint{margin-top:18px;font-size:15px;color:var(--ink-dim)}
+kbd{font-family:var(--mono);font-size:13px;background:rgba(255,255,255,.08);
   border:1px solid rgba(255,255,255,.18);border-bottom-width:2px;border-radius:5px;padding:2px 6px;color:var(--ink)}
 
 /* ---------- generic card ---------- */
@@ -93,24 +93,24 @@ kbd{font-family:var(--mono);font-size:11.5px;background:rgba(255,255,255,.08);
   box-shadow:0 0 0 0 rgba(245,185,66,.55)}
 .pane.live .dot{animation:pulse 1.6s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(245,185,66,.5)}70%{box-shadow:0 0 0 9px rgba(245,185,66,0)}100%{box-shadow:0 0 0 0 rgba(245,185,66,0)}}
-.pane-name{font-weight:600;font-size:14px}
-.pane-role{font-size:12px;color:var(--ink-dim);flex:1 1 auto;
+.pane-name{font-weight:600;font-size:17px}
+.pane-role{font-size:14.5px;color:var(--ink-dim);flex:1 1 auto;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pane-iso{font-family:var(--mono);font-size:10.5px;color:var(--gold-soft);
+.pane-iso{font-family:var(--mono);font-size:12.5px;color:var(--gold-soft);
   border:1px solid var(--line-soft);border-radius:6px;padding:3px 7px;white-space:nowrap}
 .pane-body{flex:1 1 auto;min-height:0;overflow-y:auto;padding:12px 14px;
-  font-family:var(--mono);font-size:13.5px;line-height:1.55}
+  font-family:var(--mono);font-size:17px;line-height:1.6}
 .pane-body::-webkit-scrollbar{width:8px}
 .pane-body::-webkit-scrollbar-thumb{background:rgba(245,185,66,.25);border-radius:4px}
 
 .line{margin-bottom:9px}
 .line.fresh{opacity:0;transform:translateY(6px);animation:in .26s ease forwards}
 @keyframes in{to{opacity:1;transform:none}}
-.line .tm{color:rgba(245,185,66,.55);font-size:11px;margin-right:8px}
+.line .tm{color:rgba(245,185,66,.55);font-size:13px;margin-right:9px}
 .sql{color:var(--gold-soft);white-space:pre-wrap;word-break:break-word}
 .sql .kw{color:var(--gold);font-weight:700}
 .out{margin-top:4px;padding:7px 10px;border-radius:8px;background:rgba(255,255,255,.045);
-  border-left:2px solid rgba(255,255,255,.18);color:var(--ink);white-space:pre;overflow-x:auto;font-size:12.5px}
+  border-left:2px solid rgba(255,255,255,.18);color:var(--ink);white-space:pre;overflow-x:auto;font-size:16px}
 .out.ok{border-left-color:var(--green);color:#cdf3dc}
 .out.err{border-left-color:var(--red);color:#ffc9c9;background:rgba(255,107,107,.09);white-space:pre-wrap}
 .out.wait{border-left-color:var(--blue);color:#cfe1ff;background:rgba(127,178,255,.08)}
@@ -121,24 +121,24 @@ kbd{font-family:var(--mono);font-size:11.5px;background:rgba(255,255,255,.08);
 
 /* ---------- state strip ---------- */
 .state{flex:0 0 auto;display:flex;gap:10px;flex-wrap:wrap;align-items:stretch}
-.chip{flex:1 1 150px;min-width:140px;padding:9px 13px;border-radius:12px;
+.chip{flex:1 1 175px;min-width:165px;padding:11px 15px;border-radius:12px;
   border:1px solid var(--line-soft);background:rgba(255,255,255,.035);
   transition:border-color .3s,background .3s,transform .3s}
 .chip.flash{border-color:var(--gold);background:rgba(245,185,66,.14);transform:translateY(-2px)}
-.chip .k{font-size:10.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-dim)}
-.chip .v{font-family:var(--mono);font-size:19px;font-weight:700;margin-top:3px;color:var(--ink)}
+.chip .k{font-size:12.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-dim)}
+.chip .v{font-family:var(--mono);font-size:26px;font-weight:700;margin-top:3px;color:var(--ink)}
 .chip.dirty .v{color:var(--gold)}
 .chip.dirty{border-style:dashed;border-color:var(--gold)}
-.chip .n{font-size:11px;color:var(--ink-dim);margin-top:2px}
+.chip .n{font-size:13px;color:var(--ink-dim);margin-top:2px}
 .chip.good .v{color:var(--green)}
 .chip.bad .v{color:var(--red)}
 
 /* ---------- insight ---------- */
 .insight{flex:0 0 auto;display:flex;gap:12px;align-items:flex-start;padding:12px 16px;
   border-radius:14px;border:1px solid var(--line);background:rgba(245,185,66,.07);
-  min-height:62px;transition:opacity .25s}
-.insight .ic{font-size:20px;line-height:1.2;flex:0 0 auto}
-.insight .tx{font-size:14.5px;line-height:1.55}
+  min-height:72px;transition:opacity .25s}
+.insight .ic{font-size:24px;line-height:1.2;flex:0 0 auto}
+.insight .tx{font-size:18px;line-height:1.5}
 .insight .tx b{color:var(--gold-soft)}
 .insight.warn{border-color:rgba(255,107,107,.6);background:rgba(255,107,107,.08)}
 .insight.win{border-color:rgba(93,220,140,.55);background:rgba(93,220,140,.07)}
@@ -146,41 +146,46 @@ kbd{font-family:var(--mono);font-size:11.5px;background:rgba(255,255,255,.08);
 /* ---------- schema slide ---------- */
 .schema{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-content:start}
 .tbl{padding:14px 16px;border-radius:14px;border:1px solid var(--line-soft);
-  background:rgba(255,255,255,.035);opacity:0;transform:translateY(10px);animation:in .3s ease forwards}
-.tbl h4{margin:0 0 4px;font-size:15px;color:var(--gold)}
-.tbl .pur{font-size:11.5px;color:var(--ink-dim);margin-bottom:9px;min-height:32px;line-height:1.4}
-.tbl ul{margin:0;padding:0;list-style:none;font-family:var(--mono);font-size:12px;line-height:1.75}
+  background:rgba(255,255,255,.035)}
+.tbl.fresh{opacity:0;transform:translateY(10px);animation:in .3s ease forwards}
+.tbl h4{margin:0 0 5px;font-size:18px;color:var(--gold)}
+.tbl .pur{font-size:13.5px;color:var(--ink-dim);margin-bottom:10px;min-height:38px;line-height:1.4}
+.tbl ul{margin:0;padding:0;list-style:none;font-family:var(--mono);font-size:14px;line-height:1.8}
 .tbl li{color:var(--ink-dim)}
 .tbl li b{color:var(--ink);font-weight:500}
 .tbl li .ck{color:var(--red)}
-.seed{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;opacity:0;animation:in .3s ease forwards}
+.seed{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap}
+.seed.fresh{opacity:0;animation:in .3s ease forwards}
 .schema>.state{grid-column:1/-1}
 
 /* ---------- matrix slide ---------- */
 .matrix{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;min-height:0}
-table.iso{width:100%;border-collapse:collapse;font-size:14px}
+table.iso{width:100%;border-collapse:collapse;font-size:17px}
 table.iso th,table.iso td{border:1px solid var(--line-soft);padding:9px 12px;text-align:left}
-table.iso th{background:rgba(245,185,66,.09);color:var(--gold-soft);font-weight:600;font-size:12.5px;
+table.iso th{background:rgba(245,185,66,.09);color:var(--gold-soft);font-weight:600;font-size:14px;
   text-transform:uppercase;letter-spacing:.5px}
-table.iso td:first-child{font-family:var(--mono);font-weight:700;color:var(--ink);font-size:13px}
+table.iso td:first-child{font-family:var(--mono);font-weight:700;color:var(--ink);font-size:15.5px}
 table.iso tr{opacity:.22;transition:opacity .3s}
 table.iso tr.on{opacity:1}
 .yes{color:var(--red);font-weight:600}
 .no{color:var(--green);font-weight:600}
-.pg-note{color:var(--blue);font-size:12px;display:block;margin-top:2px}
+.pg-note{color:var(--blue);font-size:13.5px;display:block;margin-top:2px}
 
 /* ---------- bullets ---------- */
-.bullets{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;max-width:1080px;margin:0 auto;width:100%}
-.bullet{display:flex;gap:14px;align-items:flex-start;padding:14px 18px;border-radius:14px;
+.bullets{flex:1;display:grid;grid-template-columns:1fr 1fr;align-content:center;gap:12px;
+  max-width:1340px;margin:0 auto;width:100%}
+.bullets>.insight{grid-column:1/-1}
+.bullet{display:flex;gap:13px;align-items:flex-start;padding:13px 16px;border-radius:14px;
   border:1px solid var(--line-soft);background:rgba(255,255,255,.03);
-  opacity:0;transform:translateX(-10px);animation:inx .3s ease forwards}
+  }
+.bullet.fresh{opacity:0;transform:translateX(-10px);animation:inx .3s ease forwards}
 @keyframes inx{to{opacity:1;transform:none}}
-.bullet .n{font-family:var(--mono);font-size:13px;color:var(--gold);flex:0 0 auto;
-  width:30px;height:30px;border-radius:8px;border:1px solid var(--line);
+.bullet .n{font-family:var(--mono);font-size:15px;color:var(--gold);flex:0 0 auto;
+  width:34px;height:34px;border-radius:9px;border:1px solid var(--line);
   display:flex;align-items:center;justify-content:center}
-.bullet h5{margin:0 0 3px;font-size:16px;font-weight:600}
-.bullet p{margin:0;font-size:13.5px;color:var(--ink-dim);line-height:1.55}
-.bullet code{font-family:var(--mono);font-size:12.5px;color:var(--gold-soft);
+.bullet h5{margin:0 0 3px;font-size:19px;font-weight:600}
+.bullet p{margin:0;font-size:16px;color:var(--ink-dim);line-height:1.45}
+.bullet code{font-family:var(--mono);font-size:15px;color:var(--gold-soft);
   background:rgba(245,185,66,.1);padding:1px 6px;border-radius:5px}
 
 /* ---------- footer ---------- */
@@ -192,35 +197,36 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:10px 26px;
 .pd:hover{transform:scale(1.35)}
 .pd.done{background:rgba(245,185,66,.45)}
 .pd.now{background:var(--gold);transform:scale(1.35)}
-.steps{font-family:var(--mono);font-size:12px;color:var(--ink-dim);white-space:nowrap}
-.keys{font-size:11.5px;color:var(--ink-dim);white-space:nowrap}
+.steps{font-family:var(--mono);font-size:13.5px;color:var(--ink-dim);white-space:nowrap}
+.keys{font-size:13px;color:var(--ink-dim);white-space:nowrap}
 
 /* ---------- notes drawer ---------- */
 #notes{position:fixed;left:0;right:0;bottom:0;z-index:40;transform:translateY(101%);
   transition:transform .28s ease;background:rgba(6,14,12,.97);border-top:2px solid var(--gold);
   padding:16px 26px 18px;max-height:46vh;overflow-y:auto;backdrop-filter:blur(8px)}
 #notes.open{transform:none}
-#notes h6{margin:0 0 8px;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)}
-#notes .say{font-size:15px;line-height:1.65;max-width:1100px}
+#notes h6{margin:0 0 8px;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)}
+#notes .say{font-size:19px;line-height:1.6;max-width:1100px}
 #notes .say b{color:var(--gold-soft)}
-#notes .nxt{margin-top:10px;font-size:12.5px;color:var(--ink-dim);font-family:var(--mono)}
+#notes .nxt{margin-top:10px;font-size:14.5px;color:var(--ink-dim);font-family:var(--mono)}
 
 /* ---------- overview ---------- */
 #ov{position:fixed;inset:0;z-index:50;background:rgba(4,10,9,.97);padding:34px;
   display:none;overflow-y:auto;backdrop-filter:blur(6px)}
 #ov.open{display:block}
-#ov h3{margin:0 0 18px;font-size:16px;color:var(--gold);letter-spacing:1px;text-transform:uppercase}
-.ovgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+#ov h3{margin:0 0 18px;font-size:18px;color:var(--gold);letter-spacing:1px;text-transform:uppercase}
+.ovgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:12px}
 .ovc{padding:14px;border-radius:12px;border:1px solid var(--line-soft);cursor:pointer;
   background:rgba(255,255,255,.03);transition:border-color .2s,transform .2s}
 .ovc:hover{border-color:var(--gold);transform:translateY(-2px)}
-.ovc .i{font-family:var(--mono);font-size:11px;color:var(--gold)}
-.ovc .t{font-size:14px;font-weight:600;margin-top:4px}
-.ovc .s{font-size:11.5px;color:var(--ink-dim);margin-top:3px;line-height:1.45}
+.ovc .i{font-family:var(--mono);font-size:12.5px;color:var(--gold)}
+.ovc .t{font-size:16.5px;font-weight:600;margin-top:4px}
+.ovc .s{font-size:13.5px;color:var(--ink-dim);margin-top:3px;line-height:1.45}
 
 @media (max-width:900px){
   .panes{grid-template-columns:1fr}
   .schema{grid-template-columns:repeat(2,1fr)}
+  .bullets{grid-template-columns:1fr}
   header{padding:12px 16px}
   main{padding:14px 16px}
   footer{padding:9px 16px}
@@ -746,6 +752,7 @@ const DECK = [
 const $ = s => document.querySelector(s);
 const stage = $('#stage');
 let si = 0, pi = 0;                 // slide index, step index
+let lastSlide = null;               // so entrance animations play once, not on every step
 
 const KW = /\b(BEGIN|COMMIT|ROLLBACK|SAVEPOINT|SELECT|INSERT|UPDATE|DELETE|FROM|WHERE|SET|VALUES|INTO|AND|OR|ORDER BY|GROUP BY|TRANSACTION|ISOLATION|LEVEL|READ|WRITE|UNCOMMITTED|COMMITTED|REPEATABLE|SERIALIZABLE|FOR UPDATE|SHOW|TO|count)\b/g;
 const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -781,16 +788,15 @@ const TABLES = [
   c:['<b>entry_id</b> SERIAL PK','<b>order_id</b> &rarr; orders','<b>description</b> TEXT','<b>amount</b> NUMERIC(10,2)','<b>entry_time</b> TIMESTAMP']}
 ];
 
-function schemaBody(step){
+function schemaBody(step, entering){
   let h = '<div class="schema">';
   TABLES.forEach((t,i)=>{
-    const dim = (step === 0 && i > 1) ? '' : '';
-    h += `<div class="tbl" style="animation-delay:${i*70}ms">
+    h += `<div class="tbl${entering?' fresh':''}" style="animation-delay:${i*70}ms">
       <h4>${t.n}</h4><div class="pur">${t.p}</div>
       <ul>${t.c.map(c=>`<li>${c}</li>`).join('')}</ul></div>`;
   });
   if(step >= 1){
-    h += `<div class="seed" style="animation-delay:120ms">
+    h += `<div class="seed${step === 1 ? ' fresh':''}" style="animation-delay:120ms">
       <div class="insight" style="flex:1"><div class="ic">&#128737;</div><div class="tx">
       The two <b>CHECK</b> constraints are not decoration. <code>stock_qty &gt;= 0</code> is what
       fails in demo 2 and forces a whole transaction to be undone — that is <b>Consistency</b>
@@ -829,7 +835,7 @@ function matrixBody(step){
   ISO_ROWS.forEach((r,i)=>{
     const on = step >= i+1 ? 'on' : '';
     h += `<tr class="${on}"><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td>
-      <td style="font-size:12.5px;color:var(--ink-dim);line-height:1.45">${r[4]}</td></tr>`;
+      <td style="font-size:15px;color:var(--ink-dim);line-height:1.5">${r[4]}</td></tr>`;
   });
   h += '</tbody></table>';
   if(step >= 5){
@@ -855,11 +861,11 @@ function bulletsBody(step){
   let h = '<div class="bullets">';
   RULES.forEach((r,i)=>{
     if(step >= i)
-      h += `<div class="bullet" style="animation-delay:${i*40}ms">
+      h += `<div class="bullet${i === step ? ' fresh':''}">
         <div class="n">${i+1}</div><div><h5>${r[0]}</h5><p>${r[1]}</p></div></div>`;
   });
   if(step >= 6)
-    h += `<div class="insight win" style="margin-top:4px"><div class="ic">&#9749;</div><div class="tx">
+    h += `<div class="insight win"><div class="ic">&#9749;</div><div class="tx">
       <b>&ldquo;Every real-world payment, booking, or order &mdash; is a transaction at work.&rdquo;</b>
       &nbsp; Run all twelve yourself: <code>psql -d transaction_cafe -f sql/00_setup.sql</code>, then
       <code>./run_demo.sh 05_non_repeatable_read</code>.</div></div>`;
@@ -926,10 +932,10 @@ function dualBody(slide, step){
 }
 
 /* ---------- render ---------- */
-function bodyFor(slide, step){
+function bodyFor(slide, step, entering){
   switch(slide.type){
     case 'title':  return titleBody();
-    case 'schema': return schemaBody(step);
+    case 'schema': return schemaBody(step, entering);
     case 'matrix': return matrixBody(step);
     case 'bullets':return bulletsBody(step);
     default:       return dualBody(slide, step);
@@ -939,7 +945,9 @@ function bodyFor(slide, step){
 function render(){
   const slide = DECK[si];
   pi = Math.max(0, Math.min(pi, slide.steps.length-1));
-  stage.innerHTML = `<div class="slide active">${bodyFor(slide, pi)}</div>`;
+  const entering = lastSlide !== slide.id;
+  lastSlide = slide.id;
+  stage.innerHTML = `<div class="slide active">${bodyFor(slide, pi, entering)}</div>`;
   $('#sTitle').textContent = slide.title;
   $('#sSub').textContent   = slide.sub;
   $('#sTag').textContent   = slide.tag;
